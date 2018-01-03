@@ -7,6 +7,10 @@
 //
 
 import UIKit
+import  GoogleMobileAds
+import Alamofire
+import PopupDialog
+import AVFoundation
 
 extension Array {
     mutating func shuffle () {
@@ -18,10 +22,10 @@ extension Array {
     }
 }
 
-class ViewController: UIViewController, ScratchCardImageViewDelegate , UICollectionViewDataSource, UICollectionViewDelegate{
+class ViewController: UIViewController, ScratchCardImageViewDelegate , UICollectionViewDataSource, UICollectionViewDelegate,GADInterstitialDelegate{
 
     
-    var songname:String="TRANTHANH"
+    var songname:String=""
 
     var currsong = NghesiObj(name: "tranthanh", nameid: "tranthanh", urlimg: "url")
 
@@ -38,26 +42,132 @@ class ViewController: UIViewController, ScratchCardImageViewDelegate , UICollect
     var type1:String!
     var device:String!
     
-
+     var bombSoundEffect: AVAudioPlayer?
+    var interstitial: GADInterstitial!
+    
+    
     @IBOutlet weak var scratchCard: ScratchCardImageView!
     
     @IBOutlet weak var collv1songname: UICollectionView!
     @IBOutlet weak var collv: UICollectionView!
     
+    @IBOutlet weak var bannerView: GADBannerView!
+    
+    
+    @IBOutlet weak var myImage: UIImageView!
+    @IBOutlet weak var lbpint: UILabel!
+    
+    @IBAction func back(_ sender: Any) {
+        //self.dismiss(animated: true, completion: nil)
+          show_ads()
+    }
+    
+    
+    @IBAction func showhelp(_ sender: Any) {
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        
+        let editTaskVC = storyBoard.instantiateViewController(withIdentifier: "WebViewController") as! WebViewController
+        editTaskVC.nghesi = self.currsong
+        
+        self.present(editTaskVC, animated:true, completion:nil)
+    }
+    
+    @IBAction func playnext(_ sender: Any) {
+        alamofireGetAlbum() 
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
       
+        let userDefaults = UserDefaults.standard
+        coin  = userDefaults.integer(forKey: "coin")
+        point  = userDefaults.integer(forKey: "point")
+        device  = userDefaults.string(forKey: "device")
+
         
         scratchCard.image = UIImage(color: UIColor.gray, size: scratchCard.frame.size)
         scratchCard.lineType = .square
-        scratchCard.lineWidth = 10
+        scratchCard.lineWidth = 5
         scratchCard.delegate = self
         
         repare(songname: songname)
+        alamofireGetAlbum()
+        
+        
+        //ads
+        bannerView.adSize=kGADAdSizeSmartBannerPortrait
+        print("Google Mobile Ads SDK version: \(GADRequest.sdkVersion())")
+        //bannerView.adUnitID = "ca-app-pub-8623108209004118/3364165189"
+        
+        //bannerView.adUnitID = "ca-app-pub-3940256099942544/2934735716" //test
+        bannerView.adUnitID = "ca-app-pub-8623108209004118/9908546789"  //new sbizbanner
+        
+        bannerView.rootViewController = self
+        bannerView.load(GADRequest())
+        
+        
+        
+        interstitial = GADInterstitial(adUnitID: "ca-app-pub-8623108209004118/4267318788")
+        let request = GADRequest()
+        interstitial.load(request)
+        interstitial.delegate = self
         
         
     }
-
+    func createAndLoadInterstitial() -> GADInterstitial {
+        //        var interstitial = GADInterstitial(adUnitID: "ca-app-pub-8623108209004118/4267318788")
+        //        interstitial.delegate = self as! GADInterstitialDelegate
+        //        interstitial.load(GADRequest())
+        return interstitial
+    }
+    
+    func interstitialDidDismissScreen(_ ad: GADInterstitial) {
+        // interstitial = createAndLoadInterstitial()
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    func show_ads() -> Void {
+        
+        if interstitial.isReady {
+            interstitial.present(fromRootViewController: self)
+        } else {
+            print("Ad wasn't ready")
+            self.dismiss(animated: true, completion: nil)
+        }
+        
+    }
+    
+    func setupgame() -> Void {
+        self.num=18;
+        traloiInt.removeAll()
+        traloi.removeAll()
+        lvisible.removeAll()
+        
+        currInt=0 //fix
+        currsong = list[currInt]
+        songname=(currsong?.name.replacingOccurrences(of: " ", with: ""))!
+        print("song:\(songname)")
+        
+        //songname=(currsong?.tonename.replacingOccurrences(of: " ", with: ""))!
+        repare(songname: songname)
+      
+        let urlimage = URL(string: (currsong?.urlimg)!)
+        let data = try? Data(contentsOf: urlimage!)
+        myImage.image = UIImage(data: data!)
+        
+        
+        collv1songname.isUserInteractionEnabled = true
+        collv.isUserInteractionEnabled = true
+        collv1songname.reloadData()
+        collv.reloadData()
+        currInt += 1
+       
+        scratchCard.image = UIImage(color: UIColor.gray, size: scratchCard.frame.size)
+    }
+    func  playnext() -> Void {
+       alamofireGetAlbum()
+        
+    }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -67,7 +177,9 @@ class ViewController: UIViewController, ScratchCardImageViewDelegate , UICollect
         //print(eraseProgress)
     }
     func repare(songname:String) -> Void {
-        let l=songname.lengthOfBytes(using: .ascii)
+        //let l = songname.lengthOfBytes(using: .utf16)
+        let l = songname.count
+        print("len:\(l)")
         let randstr=randomString(length: 18-l) + songname.uppercased()
         
         characters = randstr.characters.map { String($0) }
@@ -107,7 +219,10 @@ class ViewController: UIViewController, ScratchCardImageViewDelegate , UICollect
         }
         else
         {
-            return songname.lengthOfBytes(using: .ascii)
+            //let l = songname.lengthOfBytes(using: .utf16)
+            let l = songname.count
+            print("len:\(l)")
+            return l
         }
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -134,7 +249,7 @@ class ViewController: UIViewController, ScratchCardImageViewDelegate , UICollect
         else{
             let cell = collv1songname.dequeueReusableCell(withReuseIdentifier: "mycellsongname", for: indexPath) as! Mycell1
             // Do any custom modifications you your cell, referencing the outlets you defined in the Custom cell file.
-            cell.backgroundColor = UIColor.white
+            //cell.backgroundColor = UIColor.cyan
             var str:String=""
             //print("size:\(traloi.count)")
             if (indexPath.row<=traloi.count-1)
@@ -144,7 +259,7 @@ class ViewController: UIViewController, ScratchCardImageViewDelegate , UICollect
             }
             
             cell.lbsongname.text = str
-            cell.backgroundColor = UIColor .clear
+            //cell.backgroundColor = UIColor .clear
             return cell
         }
         
@@ -152,6 +267,7 @@ class ViewController: UIViewController, ScratchCardImageViewDelegate , UICollect
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
+        playsoundclick()
         if (collectionView==self.collv)
         {
             //xli gridview 2
@@ -170,7 +286,7 @@ class ViewController: UIViewController, ScratchCardImageViewDelegate , UICollect
             if traloi.count>0
             {
                 traloi.removeLast()
-                lvisible[traloiInt[indexPath.row]]=true
+                lvisible[traloiInt.last!]=true
                 traloiInt.removeLast()
             }
             
@@ -180,26 +296,114 @@ class ViewController: UIViewController, ScratchCardImageViewDelegate , UICollect
         self.collv.reloadData()
         //print("\(lvisible)")
         
-        if (traloi.count==songname.lengthOfBytes(using: .ascii))
+        if (traloi.count==songname.count)
         {
             //check kqua
             let strdapan=traloi.flatMap({$0}).joined()
             print("dapan:\(strdapan)")
-            print("songname:\(currsong?.name)")
-            if (strdapan==songname)
+            print("songname:\(songname)")
+            
+            if (strdapan==songname.uppercased())
             {
-                //show_congrate()
+                print("kqua:dung")
+                show_congrate()
                 point += 1
                 coin += 1
-                //update_label()
+                update_label()
             }
             else
             {
-                
+                  print("kqua:sai")
             }
         }
         
     }
+    func playsoundclick()  {
+        let path = Bundle.main.path(forResource: "click.mp3", ofType:nil)!
+        let url = URL(fileURLWithPath: path)
+        
+        do {
+            bombSoundEffect = try AVAudioPlayer(contentsOf: url)
+            bombSoundEffect?.play()
+        } catch {
+            // couldn't load file :(
+        }
+    }
+    func alamofireGetAlbum() {
+        let todoEndpoint: String = "http://123.30.100.126:8081/Restapi/rest/showbiz/getnghesiv2?num=40&device=" + device
+        print("url:"+todoEndpoint)
+        Alamofire.request(todoEndpoint)
+            
+            .responseJSON { response in
+                guard response.result.error == nil else {
+                    // got an error in getting the data, need to handle it
+                    print(response.result.error!)
+                    //completionHandler(.failure(response.result.error!))
+                    return
+                }
+                
+                // make sure we got JSON and it's an array of dictionaries
+                guard let json = response.result.value as? [[String: AnyObject]] else {
+                    print("didn't get todo objects as JSON from API")
+                    //                    completionHandler(.failure(BackendError.objectSerialization(reason: "Did not get JSON array in response")))
+                    return
+                }
+                
+                // turn each item in JSON in to Todo object
+                self.list.removeAll()
+                for element in json {
+                    if let todoResult = NghesiObj(json: element) {
+                        self.list.append(todoResult)
+                    }
+                }
+                print("out listalbum:\(self.list.count)")
+                self.setupgame()
+                
+        }
+    }
+    func show_congrate() -> Void {
+        // Prepare the popup assets
+        let title = ""
+        let message = ""
+        let image = UIImage(named: "congra")
+        
+        // Create the dialog
+        let popup = PopupDialog(title: title, message: message, image: image)
+        
+        // Create buttons
+        let buttonOne = CancelButton(title: "CHƠI TIẾP") {
+            //print("You canceled the car dialog.")
+            self.playnext()
+        }
+        let button2 = CancelButton(title: "TIỂU SỬ") {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            
+            let editTaskVC = storyBoard.instantiateViewController(withIdentifier: "WebViewController") as! WebViewController
+            editTaskVC.nghesi = self.currsong
+            
+            self.present(editTaskVC, animated:true, completion:nil)
+        }
+        
+        
+        
+        // Add buttons to dialog
+        // Alternatively, you can use popup.addButton(buttonOne)
+        // to add a single button
+        popup.addButtons([button2])
+        popup.addButtons([buttonOne])
+        
+        // Present dialog
+        self.present(popup, animated: true, completion: nil)
+    }
+    func update_label() -> Void {
+        lbpint.text = String(point)
+        //lbcoin.text = String(coin)
+        let userDefaults = UserDefaults.standard
+        
+        userDefaults.set(coin, forKey: "coin")
+        userDefaults.set(point, forKey: "point")
+    }
+    
 
 }
 

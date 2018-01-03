@@ -13,6 +13,10 @@ import  GoogleMobileAds
 class AlbumViewController: UIViewController ,UICollectionViewDelegate, UICollectionViewDataSource{
     
     
+    @IBAction func close(_ sender: Any) {
+        self.dismiss(animated: true, completion: nil)
+    }
+    
     @IBOutlet weak var bannerView: GADBannerView!
     
     @IBOutlet weak var collAlbum: UICollectionView!

@@ -12,5 +12,6 @@ pod 'Google-Mobile-Ads-SDK'
 pod 'Firebase/Core'
 
 pod "SwiftSoup"
+pod 'PopupDialog'
 
 end

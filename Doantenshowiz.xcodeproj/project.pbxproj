@@ -13,6 +13,7 @@
 		FA0209F01FF8919700FD2B35 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA0209EE1FF8919700FD2B35 /* Main.storyboard */; };
 		FA0209F21FF8919700FD2B35 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA0209F11FF8919700FD2B35 /* Assets.xcassets */; };
 		FA0209F51FF8919700FD2B35 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA0209F31FF8919700FD2B35 /* LaunchScreen.storyboard */; };
+		FA678FA31FFD343500874F70 /* click.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = FA678FA21FFD343500874F70 /* click.mp3 */; };
 		FAE737671FFA81E000A36FA1 /* AlbumObj.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE737601FFA81DF00A36FA1 /* AlbumObj.swift */; };
 		FAE737681FFA81E000A36FA1 /* NghesiObj.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE737611FFA81DF00A36FA1 /* NghesiObj.swift */; };
 		FAE737691FFA81E000A36FA1 /* ColumnFlowLayout2.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE737631FFA81E000A36FA1 /* ColumnFlowLayout2.swift */; };
@@ -41,6 +42,7 @@
 		FA0209F11FF8919700FD2B35 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FA0209F41FF8919700FD2B35 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		FA0209F61FF8919700FD2B35 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FA678FA21FFD343500874F70 /* click.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = click.mp3; sourceTree = "<group>"; };
 		FAE737601FFA81DF00A36FA1 /* AlbumObj.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbumObj.swift; sourceTree = "<group>"; };
 		FAE737611FFA81DF00A36FA1 /* NghesiObj.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NghesiObj.swift; sourceTree = "<group>"; };
 		FAE737631FFA81E000A36FA1 /* ColumnFlowLayout2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColumnFlowLayout2.swift; sourceTree = "<group>"; };
@@ -119,6 +121,7 @@
 				FAE7375F1FFA81DF00A36FA1 /* object */,
 				FA0209EA1FF8919700FD2B35 /* AppDelegate.swift */,
 				FA0209EC1FF8919700FD2B35 /* ViewController.swift */,
+				FA678FA21FFD343500874F70 /* click.mp3 */,
 				FA0209EE1FF8919700FD2B35 /* Main.storyboard */,
 				FA0209F11FF8919700FD2B35 /* Assets.xcassets */,
 				FA0209F31FF8919700FD2B35 /* LaunchScreen.storyboard */,
@@ -220,6 +223,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA0209F51FF8919700FD2B35 /* LaunchScreen.storyboard in Resources */,
+				FA678FA31FFD343500874F70 /* click.mp3 in Resources */,
 				FA0209F21FF8919700FD2B35 /* Assets.xcassets in Resources */,
 				FA0209F01FF8919700FD2B35 /* Main.storyboard in Resources */,
 			);
@@ -258,7 +262,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		B07AA49E32AEF498987B9A89 /* [CP] Embed Pods Frameworks */ = {

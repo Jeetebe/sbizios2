@@ -6,18 +6,21 @@
 //  Copyright © 2017 MacBook. All rights reserved.
 //
 import UIKit
-import  Alamofire
+import Alamofire
+import  GoogleMobileAds
 
+
+class AlbumViewController: UIViewController ,UICollectionViewDelegate, UICollectionViewDataSource{
     
-    class AlbumViewController: UIViewController ,UICollectionViewDelegate, UICollectionViewDataSource{
-        
-        
-        @IBOutlet weak var collAlbum: UICollectionView!
-        
+    
+    @IBOutlet weak var bannerView: GADBannerView!
+    
+    @IBOutlet weak var collAlbum: UICollectionView!
+    
         var list = [NghesiObj]()
         
         let columnLayout = ColumnFlowLayout2(
-            cellsPerRow: 3,
+            cellsPerRow: 2,
             minimumInteritemSpacing: 10,
             minimumLineSpacing: 10,
             sectionInset: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
@@ -29,6 +32,17 @@ import  Alamofire
             
             self.collAlbum?.collectionViewLayout = columnLayout
             alamofireGetAlbum()
+            
+            //ads
+            bannerView.adSize=kGADAdSizeSmartBannerPortrait
+            print("Google Mobile Ads SDK version: \(GADRequest.sdkVersion())")
+            //bannerView.adUnitID = "ca-app-pub-8623108209004118/3364165189"
+            
+            //bannerView.adUnitID = "ca-app-pub-3940256099942544/2934735716" //test
+            bannerView.adUnitID = "ca-app-pub-8623108209004118/9908546789"  //new sbizbanner
+            
+            bannerView.rootViewController = self
+            bannerView.load(GADRequest())
         }
         
         override func didReceiveMemoryWarning() {
@@ -90,19 +104,17 @@ import  Alamofire
             if let cell = collectionView.cellForItem(at: indexPath as IndexPath) {
                 
                 let id=list[indexPath.row].nameid.lowercased().replacingOccurrences(of: " ", with: "")
-                showplayer(id: id)
+                showplayer(position:indexPath.row)
             } else {
                 // Error indexPath is not on screen: this should never happen.
             }
         }
-        func showplayer(id:String) -> Void {
+    func showplayer(position: Int) -> Void {
             let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
             
             let editTaskVC = storyBoard.instantiateViewController(withIdentifier: "WebViewController") as! WebViewController
-            //editTaskVC.chonInt = 0
-            //editTaskVC.listtophit=self.listtophit
-            //editTaskVC.loai=1
-            //editTaskVC.albumid=id
+            editTaskVC.nghesi = self.list[position]
+     
             self.present(editTaskVC, animated:true, completion:nil)
         }
         

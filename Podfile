@@ -9,6 +9,8 @@ target 'Doantenshowiz' do
 pod 'Alamofire'
 pod 'SwiftyJSON'
 pod 'Google-Mobile-Ads-SDK'
+pod 'Firebase/Core'
 
+pod "SwiftSoup"
 
 end
